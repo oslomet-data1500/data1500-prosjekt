@@ -884,7 +884,53 @@ I scenario 7 er `2740 Oppgjørskonto MVA` utelatt fra posteringene. Scenarioteks
 
 ---
 
-### Oppgave 3: Hierarkisk Kontoplan med `WITH RECURSIVE`
+### Oppgave 3: Grunnleggende SQL spørringer mot dobbelt bokholderi
+
+**Læringsmål:**
+
+- Forstå grunnleggene SQL spørringer
+
+#### Del A — Grunnleggende `SELECT` og `JOIN`
+
+**A.1: Vis hele kontoplanen** Skriv en spørring som henter kontonummer, navn og kontoklasse for alle kontoer som har et kontonummer. Sorter resultatet etter kontonummer.
+
+**A.2: Vis alle kontoklasser** Skriv en spørring som henter kode, navn og type (`BALANSE`/`RESULTAT`) for alle de åtte kontoklassene. Sorter etter klassenummer.
+
+**A.3: Koble kontoer med klasser** Skriv en spørring som viser kontonummer, kontonavn og navnet på kontoklassen kontoen tilhører. Bruk en `JOIN`.
+
+#### Del B: Aggregering med `GROUP BY`
+
+**B.1: B.4: Antall posteringer per transaksjon** Skriv en spørring som viser bilagsnummer, beskrivelse og bilagsdato for hver transaksjon, sammen med antall posteringer den inneholder. Sorter etter dato.
+
+**B.2: Saldo per konto** Skriv en spørring som beregner og viser den totale saldoen i kroner for hver konto som har posteringer. Vis kontonummer, navn og saldo. Sorter etter kontonummer.
+
+#### Del C: Filtrering med `WHERE`, `HAVING` og `CASE`
+
+**C.1: Finn MVA-pliktige eller placeholder-kontoer** Skriv en spørring som finner alle kontoer som enten er MVA-pliktige (`mva_pliktig = TRUE`) ELLER er en placeholder-konto (`er_placeholder = TRUE`).
+
+**C.2: Vis lønnstransaksjonen med debet/kredit** Skriv en spørring som henter alle posteringer relatert til lønn (der transaksjonensbeskrivelse inneholder 'lønn'). Vis transaksjonsbeskrivelse, dato, kontonummer, kontonavn, beløp og en egen kolonne som sier 'Debet' eller 'Kredit' basert på fortegnet til beløpet.
+
+**C.3: Antall kontoer per klasse** Skriv en spørring som viser antall reelle driftskontoer i hver av de åtte kontoklassene. Vis også hvor mange av disse som er markert som MVA-pliktige. Bruk `LEFT JOIN` for å inkludere klasser uten kontoer.
+
+**C.4: Saldo for alle eiendelskontoer** Skriv en spørring som viser saldoen for alle reelle eiendelskontoer (klasse 1), inkludert de som har null i saldo. Bruk `LEFT JOIN`.
+
+**C.5: Finn ubalanserte transaksjoner** Skriv en spørring som verifiserer dobbelt bokholderi-prinsippet. Spørringen skal finne alle transaksjoner der summen av `belop_teller` for alle tilhørende posteringer *ikke* er 0. Spørringen skal returnere et tomt resultat hvis databasen er i balanse.
+
+#### Del D: Mer avanserte spørringer
+
+**D.1: Vis alle MVA-beregninger** Skriv en spørring som henter alle MVA-linjer og kobler dem med MVA-koden og transaksjonen de tilhører. Vis MVA-kode, grunnlag, MVA-beløp og transaksjonsbeskrivelse.
+
+**D.2: Vis alle valutakurser** Skriv en spørring som viser alle registrerte valutakurser. Vis 'fra'-valuta, 'til'-valuta, kurs og dato. Sorter etter nyeste kurs først.
+
+**D.3: Antall transaksjoner per periode** Skriv en spørring som viser antall transaksjoner i hver regnskapsperiode som har transaksjoner. Vis periodenavn, datoer, status og antall transaksjoner.
+
+**D.4: Total saldo per kontoklasse** Skriv en spørring som beregner den totale saldoen for hver kontoklasse. Vis klassenummer, klassenavn, type og totalsaldo.
+
+**D.5: Detaljert analyse av resultatkontoer** Skriv en spørring som viser en detaljert analyse for alle resultatkontoer (klasse 3-8). Vis kontonummer, navn, antall posteringer, netto saldo, total debet, total kredit og gjennomsnittlig transaksjonsbeløp (absoluttverdi).
+
+---
+
+### Oppgave 4: Hierarkisk Kontoplan med `WITH RECURSIVE`
 
 #### Del A — Rekursiv traversering
 
@@ -908,7 +954,7 @@ Utvid spørringen fra Del A. Bruk en CTE (Common Table Expression) til å først
 
 ---
 
-### Oppgave 4: Ytelsesanalyse med `EXPLAIN ANALYZE` og `MATERIALIZED VIEW`
+### Oppgave 5: Ytelsesanalyse med `EXPLAIN ANALYZE` og `MATERIALIZED VIEW`
 
 #### Del A — Opprett et komplekst `VIEW`
 
@@ -946,33 +992,6 @@ Forklar i rapporten:
 - Hvorfor er det materialiserte viewet raskere for lesing?
 - Hva er den fundamentale ulempen (stikkord: datakonsistens, `REFRESH MATERIALIZED VIEW`)?
 - I hvilke situasjoner er et `MATERIALIZED VIEW` uegnet, og hva kan brukes i stedet?
-
----
-
-### Oppgave 5: Flerdimensjonal Analyse med `ROLLUP` og `CUBE`
-
-#### Del A — Kostnadsanalyse med `ROLLUP`
-
-Skriv en spørring som viser total kostnad per kontoklasse og per konto for alle resultatkontoer (klasse 3–8). Bruk `GROUP BY ROLLUP(klasse_navn, konto_navn)` for å få subtotaler per klasse og en totalsum for alle kontoer.
-
-Det forventede resultatet skal ha tre typer rader:
-- Én rad per konto med faktisk kostnad.
-- Én subtotalrad per kontoklasse (der `konto_navn IS NULL`).
-- Én totalrad for alle klasser (der både `klasse_navn` og `konto_navn` er `NULL`).
-
-Forklar i rapporten hva `NULL` betyr i de to siste radtypene, og knytt dette til treverdislogikk i SQL.
-
-#### Del B — MVA-analyse med `CUBE`
-
-Skriv en spørring som analyserer `MVA_linjer` og viser totalt MVA-beløp gruppert på `MVA_koder.type` og `MVA_koder.kode`. Bruk `GROUP BY CUBE(type, kode)` for å generere alle mulige subtotaler.
-
-Resultatet skal inneholde:
-- Beløp per type og kode (f.eks. `UTGAAENDE` + kode `1`).
-- Subtotal per type (f.eks. totalt `UTGAAENDE` MVA, der `kode IS NULL`).
-- Subtotal per kode på tvers av type (der `type IS NULL`).
-- Totalsum for all MVA (der begge er `NULL`).
-
-Forklar i rapporten forskjellen mellom `ROLLUP` og `CUBE` med utgangspunkt i disse to eksemplene.
 
 ---
 

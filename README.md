@@ -12,7 +12,7 @@ Vennligst rapporter alle feil du finner til Janis (bruk e-post).
 | 1       | `oppgave1.sql` | `besvarelse/oppgave1-9/test-scripts` | Ja. Mermaid koden skrives i `RAPPORT.md` | |
 | 2       | `oppgave2.sql` | `besvarelse/oppgave1-9/test-scripts`  | - |
 | 3 | `oppgave3.sql` | `besvarelse/oppgave1-9/test-scripts` | - |
-| 4 | `oppgave4.sql` | `besvarelse/oppgave1-9/test-scripts` | Ja. I `RAPPORT.md` |
+| 4 | `oppgave4.sql` | `besvarelse/oppgave1-9/test-scripts` | - |
 | 5 | `oppgave5.sql` | `besvarelse/oppgave1-9/test-scripts` | Ja. I `RAPPORT.md`|
 | 6 | `oppgave6.sql` | `besvarelse/oppgave1-9/test-scripts` | Ja. I `RAPPORT.md` |
 | 7 | `oppgave7.sql` | `besvarelse/oppgave1-9/test-scripts` | Ja. I `RAPPORT.md` |
